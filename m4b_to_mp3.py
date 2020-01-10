@@ -1,12 +1,15 @@
 import os
 import json
+import platform
 import tkinter as tk
-from tkinter.filedialog import askopenfilenames
+from tkinter.filedialog import askopenfilename
 
 class GuiWindow(object):
     def __init__(self, master):
         self.master = master
         self.ffmpeg = "ffmpeg.exe"
+        if platform.system() == 'Linux':
+            self.ffmpeg = "ffmpeg"
         self.ext = ".m4b"
         with open('lang/hr_lang.json') as json_file:
             self.lang = json.load(json_file)
@@ -17,6 +20,8 @@ class GuiWindow(object):
         self.file_name = tk.Button(self.file_label, font='Helvetica 12', text=self.lang[1],command=self.start)
         self.file_name.pack(fill=tk.X)
         self.file_label.pack(fill=tk.X, padx = 10)
+        self.orig_button_color = self.file_name.cget("background")
+        print(self.orig_button_color)
 
         self.file_list = tk.LabelFrame(self.master, text=self.lang[2])
         self.canvas = tk.Canvas(self.file_list, bg="white", height=200, width=200)
@@ -38,8 +43,8 @@ class GuiWindow(object):
         self.start_button.pack(fill=tk.X, padx = 20, pady=10)
 
     def start(self):
-        self.filenames = askopenfilenames(title = self.lang[5])
-        self.file_name.config(bg="SystemButtonFace")
+        self.filenames = askopenfilename(title = self.lang[5], multiple=True)
+        self.file_name.config(bg="#d9d9d9")
         print(self.filenames)
         for self.widget in self.scrollable_frame.winfo_children():
             self.widget.destroy()
@@ -69,6 +74,7 @@ class GuiWindow(object):
                 except Exception as e:
                     print(e)
                 print(f"File '{self.filename}' converted")
+            print("All files converted")
         else:
             self.file_name.config(bg="red")
 
